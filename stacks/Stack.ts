@@ -1,4 +1,4 @@
-import { StackContext, Api, Table, use } from "sst/constructs";
+import { StackContext, Api, Table, use, Config } from "sst/constructs";
 
 export function Database({ stack }: StackContext) {
   const table = new Table(stack, "table", {
@@ -49,13 +49,26 @@ export function Database({ stack }: StackContext) {
   };
 }
 
+export function Parameters({ stack }: StackContext) {
+  const botPublicKey = new Config.Secret(stack, "BOT_PUBLIC_KEY");
+  // const botToken = new Config.Secret(stack, "BOT_TOKEN");
+  // const webTokenSecret = new Config.Secret(stack, "WEB_TOKEN_SECRET");
+
+  return {
+    botPublicKey,
+    // botToken,
+    // webTokenSecret,
+  };
+}
+
 export function API({ stack }: StackContext) {
   const db = use(Database);
+  const param = use(Parameters);
 
   const api = new Api(stack, "api", {
     defaults: {
       function: {
-        bind: [db.table],
+        bind: [db.table, param.botPublicKey],
       },
     },
     routes: {
