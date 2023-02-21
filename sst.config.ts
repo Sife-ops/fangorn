@@ -1,5 +1,5 @@
 import { SSTConfig } from "sst";
-import { API } from "./stacks/MyStack";
+import { API, Database } from "./stacks/Stack";
 
 export default {
   config(_input) {
@@ -8,6 +8,7 @@ export default {
       region: "us-east-1",
     };
   },
-  stacks(app) {    app.stack(API)
-},
+  stacks(app) {
+    app.stack(Database).stack(API);
+  },
 } satisfies SSTConfig;
