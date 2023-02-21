@@ -12,6 +12,8 @@
     "sst": "^2.0.32"
   },
   "dependencies": {
+    "aws-sdk": "^2.1319.0",
+    "node-fetch": "^3.3.0",
     "sst": "^2.0.32",
     "tweetnacl": "^1.0.3"
   }

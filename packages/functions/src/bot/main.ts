@@ -1,8 +1,9 @@
 // import * as commands from "./commands";
+import AWS from "aws-sdk";
 import nacl from "tweetnacl";
 import { Config } from "sst/node/config";
 // import { Ctx } from "./ctx";
-// import { Function } from "@serverless-stack/node/function";
+import { Function } from "sst/node/function";
 // import { lambda } from "./common";
 // import { runner } from "@psycho-mantis/bot/runner";
 
@@ -11,11 +12,14 @@ import {
   APIGatewayProxyResultV2,
   Handler,
 } from "aws-lambda";
+import { Ctx } from "./ctx";
 
 export const handler: Handler<
   APIGatewayProxyEventV2,
   APIGatewayProxyResultV2<any>
 > = async (event) => {
+  const lambda = new AWS.Lambda();
+
   try {
     const interactionBody = JSON.parse(event.body!);
 
@@ -38,12 +42,13 @@ export const handler: Handler<
       }
 
       case 2: {
-        // await lambda
-        //   .invokeAsync({
-        //     FunctionName: Function.botLambda.functionName,
-        //     InvokeArgs: JSON.stringify({ interactionBody }),
-        //   })
-        //   .promise();
+        await lambda
+          .invokeAsync({
+            FunctionName: Function.botLambda.functionName,
+            InvokeArgs: JSON.stringify({ interactionBody }),
+          })
+          .promise();
+
         // return {
         //   type: 5, // deferred
         //   data: {
@@ -73,23 +78,21 @@ export const handler: Handler<
   }
 };
 
-// export const consumer = async (event: any) => {
-//   const ctx = await Ctx.init(event);
+export const consumer = async (event: any) => {
+  const ctx = await Ctx.init(event);
 
-//   try {
-//     await Promise.all(ctx.onboardUsers());
-
-//     const { mutations } = await runner(
-//       commands,
-//       ctx.options.getCommandName(0),
-//       ctx
-//     );
-
-//     await Promise.all(mutations || []);
-//   } catch (e) {
-//     console.log(e);
-//     await ctx.followUp({
-//       content: "todo: sorry",
-//     });
-//   }
-// };
+  try {
+    await Promise.all(ctx.onboardUsers());
+    // const { mutations } = await runner(
+    //   commands,
+    //   ctx.options.getCommandName(0),
+    //   ctx
+    // );
+    // await Promise.all(mutations || []);
+  } catch (e) {
+    console.log(e);
+    await ctx.followUp({
+      content: "todo: sorry",
+    });
+  }
+};

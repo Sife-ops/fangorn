@@ -1,4 +1,11 @@
-import { StackContext, Api, Table, use, Config } from "sst/constructs";
+import {
+  StackContext,
+  Api,
+  Table,
+  use,
+  Config,
+  Function,
+} from "sst/constructs";
 
 export function Database({ stack }: StackContext) {
   const table = new Table(stack, "table", {
@@ -51,12 +58,12 @@ export function Database({ stack }: StackContext) {
 
 export function Parameters({ stack }: StackContext) {
   const botPublicKey = new Config.Secret(stack, "BOT_PUBLIC_KEY");
-  // const botToken = new Config.Secret(stack, "BOT_TOKEN");
+  const botToken = new Config.Secret(stack, "BOT_TOKEN");
   // const webTokenSecret = new Config.Secret(stack, "WEB_TOKEN_SECRET");
 
   return {
     botPublicKey,
-    // botToken,
+    botToken,
     // webTokenSecret,
   };
 }
@@ -71,11 +78,57 @@ export function API({ stack }: StackContext) {
         bind: [db.table, param.botPublicKey],
       },
     },
-    routes: {
-      "POST /bot": "packages/functions/src/bot/main.handler",
-    },
+    // routes: {
+    //   "POST /bot": "packages/functions/src/bot/main.handler",
+    // },
   });
+
   stack.addOutputs({
     ApiEndpoint: api.url,
   });
+
+  return {
+    api,
+  };
+}
+
+export function Web({ stack }: StackContext) {
+  const api = use(API);
+  const db = use(Database);
+  const param = use(Parameters);
+
+  // const site = new StaticSite(stack, "site", {
+  //   path: "web",
+  //   buildCommand: "npm run build",
+  //   buildOutput: "dist",
+  //   environment: {
+  //     VITE_API_URL: api.api.url,
+  //     VITE_WS_API_URL: api.webSocketApi.url,
+  //   },
+  // });
+
+  const botLambda = new Function(stack, "botLambda", {
+    bind: [
+      db.table,
+      param.botToken,
+      // param.webTokenSecret,
+      // site,
+    ],
+    // permissions: ["execute-api"],
+    handler: "packages/functions/src/bot/main.consumer",
+  });
+
+  api.api.addRoutes(stack, {
+    "POST /bot": {
+      function: {
+        bind: [botLambda],
+        handler: "packages/functions/src/bot/main.handler",
+      },
+    },
+  });
+
+  // stack.addOutputs({
+  //   SITE: site.url,
+  //   FUNCTION: botLambda.functionName,
+  // });
 }
