@@ -5,6 +5,7 @@ import {
   use,
   Config,
   Function,
+  StaticSite,
 } from "sst/constructs";
 
 export function Database({ stack }: StackContext) {
@@ -59,12 +60,12 @@ export function Database({ stack }: StackContext) {
 export function Parameters({ stack }: StackContext) {
   const botPublicKey = new Config.Secret(stack, "BOT_PUBLIC_KEY");
   const botToken = new Config.Secret(stack, "BOT_TOKEN");
-  // const webTokenSecret = new Config.Secret(stack, "WEB_TOKEN_SECRET");
+  const webTokenSecret = new Config.Secret(stack, "WEB_TOKEN_SECRET");
 
   return {
     botPublicKey,
     botToken,
-    // webTokenSecret,
+    webTokenSecret,
   };
 }
 
@@ -94,22 +95,21 @@ export function Web({ stack }: StackContext) {
   const db = use(Database);
   const param = use(Parameters);
 
-  // const site = new StaticSite(stack, "site", {
-  //   path: "web",
-  //   buildCommand: "npm run build",
-  //   buildOutput: "dist",
-  //   environment: {
-  //     VITE_API_URL: api.api.url,
-  //     VITE_WS_API_URL: api.webSocketApi.url,
-  //   },
-  // });
+  const site = new StaticSite(stack, "site", {
+    path: "packages/web",
+    buildCommand: "npm run build",
+    buildOutput: "dist",
+    environment: {
+      VITE_API_URL: api.api.url,
+    },
+  });
 
   const botLambda = new Function(stack, "botLambda", {
     bind: [
       db.table,
       param.botToken,
-      // param.webTokenSecret,
-      // site,
+      param.webTokenSecret,
+      site,
     ],
     handler: "packages/functions/src/bot/main.consumer",
   });
@@ -123,7 +123,7 @@ export function Web({ stack }: StackContext) {
     },
   });
 
-  // stack.addOutputs({
-  //   SITE: site.url,
-  // });
+  stack.addOutputs({
+    SITE: site.url || "",
+  });
 }
