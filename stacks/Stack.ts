@@ -78,9 +78,6 @@ export function API({ stack }: StackContext) {
         bind: [db.table, param.botPublicKey],
       },
     },
-    // routes: {
-    //   "POST /bot": "packages/functions/src/bot/main.handler",
-    // },
   });
 
   stack.addOutputs({
@@ -114,7 +111,6 @@ export function Web({ stack }: StackContext) {
       // param.webTokenSecret,
       // site,
     ],
-    // permissions: ["execute-api"],
     handler: "packages/functions/src/bot/main.consumer",
   });
 
@@ -129,6 +125,5 @@ export function Web({ stack }: StackContext) {
 
   // stack.addOutputs({
   //   SITE: site.url,
-  //   FUNCTION: botLambda.functionName,
   // });
 }

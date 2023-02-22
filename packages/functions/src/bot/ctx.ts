@@ -78,37 +78,6 @@ export class Ctx {
     });
   }
 
-  // // websocket
-  // messageClient(connectionId: string, message: any) {
-  //   return new Promise((resolve, reject) => {
-  //     wsApi.postToConnection(
-  //       {
-  //         ConnectionId: connectionId,
-  //         Data: JSON.stringify(message),
-  //       },
-
-  //       (err, data) => {
-  //         if (err) {
-  //           console.log("err is", err);
-  //           reject(err);
-  //         }
-
-  //         resolve(data);
-  //       }
-  //     );
-  //   });
-  // }
-
-  // allMessages(message: any) {
-  //   try {
-  //     return this.getRoomCollection().ConnectionEntity.map(({ connectionId }) =>
-  //       this.messageClient(connectionId, message)
-  //     );
-  //   } catch {
-  //     return [];
-  //   }
-  // }
-
   // body
   getChannelId(): string {
     return this.interactionBody.channel_id;
@@ -121,25 +90,6 @@ export class Ctx {
   getUserId(): string {
     return this.getUser().id;
   }
-
-  // // room
-  // getRoomCollection() {
-  //   if (!this.roomCollection) throw new Error("missing roomCollection");
-  //   return this.roomCollection;
-  // }
-
-  // hasRoom() {
-  //   return !!this.roomCollection;
-  // }
-
-  // getRoom() {
-  //   return this.getRoomCollection().RoomEntity[0];
-  // }
-
-  // // player
-  // getPlayers() {
-  //   return this.getRoomCollection().PlayerEntity;
-  // }
 
   getResolvedUsers() {
     return this.interactionBody.data.resolved.users;

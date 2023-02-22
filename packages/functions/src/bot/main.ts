@@ -1,18 +1,16 @@
-// import * as commands from "./commands";
+import * as commands from "./commands";
 import AWS from "aws-sdk";
 import nacl from "tweetnacl";
 import { Config } from "sst/node/config";
-// import { Ctx } from "./ctx";
+import { Ctx } from "./ctx";
 import { Function } from "sst/node/function";
-// import { lambda } from "./common";
-// import { runner } from "@psycho-mantis/bot/runner";
+import { runner } from "./runner";
 
 import {
   APIGatewayProxyEventV2,
   APIGatewayProxyResultV2,
   Handler,
 } from "aws-lambda";
-import { Ctx } from "./ctx";
 
 export const handler: Handler<
   APIGatewayProxyEventV2,
@@ -49,17 +47,10 @@ export const handler: Handler<
           })
           .promise();
 
-        // return {
-        //   type: 5, // deferred
-        //   data: {
-        //     flags: 64,
-        //   },
-        // };
-
         return {
-          type: 4,
+          type: 5, // deferred
           data: {
-            content: "bar",
+            flags: 64,
           },
         };
       }
@@ -83,12 +74,14 @@ export const consumer = async (event: any) => {
 
   try {
     await Promise.all(ctx.onboardUsers());
-    // const { mutations } = await runner(
-    //   commands,
-    //   ctx.options.getCommandName(0),
-    //   ctx
-    // );
-    // await Promise.all(mutations || []);
+
+    const { mutations } = await runner(
+      commands,
+      ctx.options.getCommandName(0),
+      ctx
+    );
+
+    await Promise.all(mutations || []);
   } catch (e) {
     console.log(e);
     await ctx.followUp({
