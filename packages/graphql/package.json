@@ -1,0 +1,8 @@
+{
+  "name": "@fangorn/graphql",
+  "version": "0.0.0",
+  "type": "module",
+  "dependencies": {
+    "@genql/cli": "^3.0.3"
+  }
+}

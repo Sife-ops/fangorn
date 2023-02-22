@@ -79,6 +79,21 @@ export function API({ stack }: StackContext) {
         bind: [db.table, param.botPublicKey],
       },
     },
+    routes: {
+      "POST /graphql": {
+        type: "graphql",
+        function: {
+          handler: "packages/functions/src/graphql/graphql.handler",
+        },
+        pothos: {
+          schema: "packages/functions/src/graphql/schema.ts",
+          output: "packages/graphql/schema.graphql",
+          commands: [
+            "npx genql --output ./packages/graphql/genql --schema ./packages/graphql/schema.graphql --esm",
+          ],
+        },
+      },
+    },
   });
 
   stack.addOutputs({
@@ -105,12 +120,7 @@ export function Web({ stack }: StackContext) {
   });
 
   const botLambda = new Function(stack, "botLambda", {
-    bind: [
-      db.table,
-      param.botToken,
-      param.webTokenSecret,
-      site,
-    ],
+    bind: [db.table, param.botToken, param.webTokenSecret, site],
     handler: "packages/functions/src/bot/main.consumer",
   });
 

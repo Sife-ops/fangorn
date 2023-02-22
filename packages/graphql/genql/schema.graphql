@@ -1,0 +1,7 @@
+type Mutation {
+  mello: String!
+}
+
+type Query {
+  hello: String!
+}
