@@ -1,9 +1,10 @@
 import "./index.css";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Root } from "./component/page/Root";
 import { createClient, Provider } from "urql";
-import { useTypedQuery } from "@fangorn/graphql/urql";
 import { useEffect } from "react";
+import { useTypedQuery } from "@fangorn/graphql/urql";
 
 const urql = createClient({
   url: import.meta.env.VITE_API_URL + "/graphql",
@@ -34,7 +35,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<div>root</div>} />
+        <Route path="/" element={<Root />} />
         <Route path="*" element={<div>todo</div>} />
       </Routes>
     </BrowserRouter>

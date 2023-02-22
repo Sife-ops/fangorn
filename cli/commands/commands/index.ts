@@ -1,2 +1,2 @@
 export * from "./foo";
-// export * from "./link"
+export * from "./link"
