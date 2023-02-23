@@ -1,5 +1,7 @@
+import { Config } from "sst/node/config";
 import { fetchDiscord, onboardUser } from "./common";
 import { model as model_ } from "@fangorn/core/db";
+import { sign } from "jsonwebtoken";
 
 interface Option {
   name: string;
@@ -93,6 +95,17 @@ export class Ctx {
 
   getResolvedUsers() {
     return this.interactionBody.data.resolved.users;
+  }
+
+  async getToken(): Promise<string> {
+    const { userId, tokenVersion } = await model_.entities.UserEntity.update({
+      userId: this.getUserId(),
+    })
+      .add({ tokenVersion: 1 })
+      .go()
+      .then((e) => e.data);
+
+    return sign({ userId, tokenVersion }, Config.WEB_TOKEN_SECRET);
   }
 
   // onboard

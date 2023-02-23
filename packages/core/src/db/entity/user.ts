@@ -51,6 +51,12 @@ export const UserEntity = new Entity(
         required: true,
       },
 
+      tokenVersion: {
+        type: "number",
+        required: true,
+        default: 0,
+      },
+
       active: {
         type: "boolean",
         required: true,
@@ -65,7 +71,7 @@ export const UserEntity = new Entity(
       age: {
         type: "number",
         required: false,
-      }
+      },
     },
 
     model: {

@@ -8,6 +8,14 @@ export const Root: React.FC = () => {
     console.log(token);
   }, []);
 
+  if (!token) {
+    return (
+      <div>
+        <div>no token</div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div>root</div>

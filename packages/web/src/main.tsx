@@ -19,6 +19,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 );
 
 function App() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get("t");
+
   const [helloQueryRes] = useTypedQuery({
     query: {
       hello: true,
