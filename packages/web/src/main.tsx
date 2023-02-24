@@ -1,45 +1,44 @@
 import "./index.css";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Root } from "./component/page/Root";
+import { Auth } from "./component/page/auth";
+import { AuthContextProvider } from "./auth-context";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { PrivateRoutes } from "./component/private-routes";
+import { Root } from "./component/page/root";
 import { createClient, Provider } from "urql";
-import { useEffect } from "react";
-import { useTypedQuery } from "@fangorn/graphql/urql";
 
 const urql = createClient({
   url: import.meta.env.VITE_API_URL + "/graphql",
+  fetchOptions: () => {
+    return {
+      headers: {
+        authorization: localStorage.getItem("t") || ""
+      }
+    }
+  }
 });
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   // <React.StrictMode>
   <Provider value={urql}>
-    <App />
+    <AuthContextProvider>
+      <App />
+    </AuthContextProvider>
   </Provider>
   // </React.StrictMode>
 );
 
 function App() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get("t");
-
-  const [helloQueryRes] = useTypedQuery({
-    query: {
-      hello: true,
-    },
-  });
-
-  useEffect(() => {
-    const { fetching, data } = helloQueryRes;
-    if (!fetching && data) {
-      console.log(helloQueryRes);
-    }
-  }, [helloQueryRes]);
-
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Root />} />
-        <Route path="*" element={<div>todo</div>} />
+        <Route path="/" element={<PrivateRoutes />}>
+          <Route path="/" element={<Root />} />
+        </Route>
+        <Route path="/auth" element={<Auth to="/" />} />
+        <Route path="/help" element={<div>help</div>} />
+        <Route path="/error" element={<div>error</div>} />
+        <Route path="*" element={<Navigate to="/error" />} />
       </Routes>
     </BrowserRouter>
   );

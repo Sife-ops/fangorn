@@ -98,12 +98,21 @@ export class Ctx {
   }
 
   async getToken(): Promise<string> {
-    const { userId, tokenVersion } = await model_.entities.UserEntity.update({
+    await model_.entities.UserEntity.update({
       userId: this.getUserId(),
     })
       .add({ tokenVersion: 1 })
       .go()
       .then((e) => e.data);
+
+    const { userId, tokenVersion } = await model_.entities.UserEntity.get({
+      userId: this.getUserId(),
+    })
+      .go()
+      .then((e) => {
+        if (!e.data) throw new Error("user not found");
+        return e.data;
+      });
 
     return sign({ userId, tokenVersion }, Config.WEB_TOKEN_SECRET);
   }

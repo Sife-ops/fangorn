@@ -76,7 +76,7 @@ export function API({ stack }: StackContext) {
   const api = new Api(stack, "api", {
     defaults: {
       function: {
-        bind: [db.table, param.botPublicKey],
+        bind: [db.table, param.botPublicKey, param.webTokenSecret],
       },
     },
     routes: {

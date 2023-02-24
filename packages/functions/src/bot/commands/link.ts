@@ -14,7 +14,7 @@ export const link: CommandHandler = async (ctx) => {
           {
             title: "URL",
             description: `don't share links`,
-            url: `${baseUrl}?t=${await ctx.getToken()}`,
+            url: `${baseUrl}/auth?t=${await ctx.getToken()}`,
             // color: 0xff0000,
           },
         ],
