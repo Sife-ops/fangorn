@@ -4,4 +4,13 @@ type Mutation {
 
 type Query {
   hello: String!
+  viewer: User!
+}
+
+type User {
+  active: Boolean!
+  avatar: String!
+  discriminator: String!
+  userId: ID!
+  username: String!
 }

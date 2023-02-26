@@ -1,7 +1,8 @@
 export default {
     "scalars": [
         1,
-        3
+        4,
+        5
     ],
     "types": {
         "Mutation": {
@@ -17,10 +18,34 @@ export default {
             "hello": [
                 1
             ],
+            "viewer": [
+                3
+            ],
             "__typename": [
                 1
             ]
         },
-        "Boolean": {}
+        "User": {
+            "active": [
+                4
+            ],
+            "avatar": [
+                1
+            ],
+            "discriminator": [
+                1
+            ],
+            "userId": [
+                5
+            ],
+            "username": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "Boolean": {},
+        "ID": {}
     }
 }

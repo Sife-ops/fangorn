@@ -1,42 +1,27 @@
 import "./index.css";
 import ReactDOM from "react-dom/client";
-import { Auth } from "./component/page/auth";
-import { AuthContextProvider } from "./auth-context";
+import { AuthorizedRoutes } from "./component/authorized-routes";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { PrivateRoutes } from "./component/private-routes";
 import { Root } from "./component/page/root";
-import { createClient, Provider } from "urql";
-
-const urql = createClient({
-  url: import.meta.env.VITE_API_URL + "/graphql",
-  fetchOptions: () => {
-    return {
-      headers: {
-        authorization: localStorage.getItem("t") || ""
-      }
-    }
-  }
-});
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   // <React.StrictMode>
-  <Provider value={urql}>
-    <AuthContextProvider>
-      <App />
-    </AuthContextProvider>
-  </Provider>
+  <App />
   // </React.StrictMode>
 );
 
 function App() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get("t");
+  if (token) localStorage.setItem("t", token);
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<PrivateRoutes />}>
+        <Route path="/" element={<AuthorizedRoutes />}>
           <Route path="/" element={<Root />} />
+          <Route path="/wiz" element={<div>wizard</div>} />
         </Route>
-        <Route path="/auth" element={<Auth to="/" />} />
-        <Route path="/help" element={<div>help</div>} />
         <Route path="/error" element={<div>error</div>} />
         <Route path="*" element={<Navigate to="/error" />} />
       </Routes>
