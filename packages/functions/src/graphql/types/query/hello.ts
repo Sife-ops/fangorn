@@ -3,13 +3,13 @@ import { UserType } from "../user";
 
 builder.queryFields((t) => ({
   hello: t.string({
-    resolve: (_, __, ctx) => {
+    resolve: () => {
       return "hello";
     },
   }),
 
   viewer: t.field({
     type: UserType,
-    resolve: (_, __, ctx) => ctx.getUser(),
+    resolve: (_, __, ctx) => ctx.getViewer(),
   }),
 }));

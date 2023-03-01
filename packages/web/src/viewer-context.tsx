@@ -14,7 +14,7 @@ const viewerContext = (): ViewerContextType => {
   const [viewerQ] = useTypedQuery({
     query: {
       viewer: {
-        active: true,
+        visible: true,
       },
     },
   });
@@ -27,7 +27,7 @@ const viewerContext = (): ViewerContextType => {
   }, [viewerQ]);
 
   const isActive = (): boolean => {
-    return !!viewer?.active;
+    return !!viewer?.visible;
   };
 
   return {

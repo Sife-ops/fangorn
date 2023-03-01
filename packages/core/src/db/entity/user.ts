@@ -1,6 +1,6 @@
 import { Dynamo } from "../dynamo";
 import { Entity, EntityItem } from "electrodb";
-//
+import { faker } from "@faker-js/faker";
 
 export const UserEntity = new Entity(
   {
@@ -28,6 +28,18 @@ export const UserEntity = new Entity(
           composite: [],
         },
       },
+
+      recent_: {
+        index: "gsi2",
+        pk: {
+          field: "gsi2pk",
+          composite: [],
+        },
+        sk: {
+          field: "gsi2sk",
+          composite: ["lastSeen"],
+        },
+      },
     },
 
     attributes: {
@@ -51,16 +63,40 @@ export const UserEntity = new Entity(
         required: true,
       },
 
+      displayName: {
+        type: "string",
+        required: true,
+        default: () =>
+          `${faker.word.adjective()} ${faker.word.adjective()} ${faker.word.noun()}`,
+      },
+
       tokenVersion: {
         type: "number",
         required: true,
         default: 0,
       },
 
-      active: {
+      visible: {
         type: "boolean",
         required: true,
         default: false,
+      },
+
+      description: {
+        type: "string",
+        required: false,
+      },
+
+      lastSeen: {
+        type: "string",
+        required: true,
+        default: () => new Date().toISOString(),
+      },
+
+      createdAt: {
+        type: "string",
+        required: true,
+        default: () => new Date().toISOString(),
       },
 
       gender: {
@@ -68,10 +104,15 @@ export const UserEntity = new Entity(
         required: false,
       },
 
-      age: {
-        type: "number",
-        required: false,
-      },
+      // age: {
+      //   type: "number",
+      //   required: false,
+      // },
+
+      // coordinates: {
+      //   type: "string",
+      //   required: false,
+      // },
     },
 
     model: {

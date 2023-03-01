@@ -1,13 +1,22 @@
 export default {
     "scalars": [
         1,
-        4,
-        5
+        5,
+        6
     ],
     "types": {
         "Mutation": {
             "mello": [
                 1
+            ],
+            "search": [
+                4,
+                {
+                    "input": [
+                        3,
+                        "SearchInput!"
+                    ]
+                }
             ],
             "__typename": [
                 1
@@ -19,20 +28,43 @@ export default {
                 1
             ],
             "viewer": [
-                3
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "SearchInput": {
+            "cursor": [
+                1
+            ],
+            "gender": [
+                1
             ],
             "__typename": [
                 1
             ]
         },
         "User": {
-            "active": [
-                4
-            ],
             "avatar": [
                 1
             ],
+            "createdAt": [
+                1
+            ],
+            "cursor": [
+                1
+            ],
+            "description": [
+                1
+            ],
             "discriminator": [
+                1
+            ],
+            "displayName": [
+                1
+            ],
+            "lastSeen": [
                 1
             ],
             "userId": [
@@ -41,11 +73,14 @@ export default {
             "username": [
                 1
             ],
+            "visible": [
+                6
+            ],
             "__typename": [
                 1
             ]
         },
-        "Boolean": {},
-        "ID": {}
+        "ID": {},
+        "Boolean": {}
     }
 }

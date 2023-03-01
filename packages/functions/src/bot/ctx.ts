@@ -85,12 +85,12 @@ export class Ctx {
     return this.interactionBody.channel_id;
   }
 
-  getUser() {
+  getViewer() {
     return this.interactionBody.member.user;
   }
 
-  getUserId(): string {
-    return this.getUser().id;
+  getViewerId(): string {
+    return this.getViewer().id;
   }
 
   getResolvedUsers() {
@@ -99,14 +99,14 @@ export class Ctx {
 
   async getToken(): Promise<string> {
     await model_.entities.UserEntity.update({
-      userId: this.getUserId(),
+      userId: this.getViewerId(),
     })
       .add({ tokenVersion: 1 })
       .go()
       .then((e) => e.data);
 
     const { userId, tokenVersion } = await model_.entities.UserEntity.get({
-      userId: this.getUserId(),
+      userId: this.getViewerId(),
     })
       .go()
       .then((e) => {
@@ -119,7 +119,7 @@ export class Ctx {
 
   // onboard
   onboardMember() {
-    return onboardUser(this.getUser());
+    return onboardUser(this.getViewer());
   }
 
   onboardResolved() {

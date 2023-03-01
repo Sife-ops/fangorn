@@ -23,7 +23,7 @@ export class Ctx {
     return verify(token, Config.WEB_TOKEN_SECRET) as Payload;
   }
 
-  async getUser(): Promise<UserEntityType> {
+  async getViewer(): Promise<UserEntityType> {
     return model_.entities.UserEntity.get({
       userId: this.getPayload().userId,
     })
@@ -32,12 +32,21 @@ export class Ctx {
       .then((user) => {
         if (!user) throw new Error("user not found");
         return user;
+      })
+      .then(async (user) => {
+        // todo: sus, move somewhere else
+        await model_.entities.UserEntity.update({
+          userId: user.userId,
+        })
+          .set({ lastSeen: new Date().toISOString() })
+          .go();
+        return user;
       });
   }
 
   async isAuthenticated(): Promise<boolean> {
     try {
-      return this.getUser()
+      return this.getViewer()
         .then((user) => user.tokenVersion === this.getPayload().tokenVersion)
         .catch(() => false);
     } catch (e) {

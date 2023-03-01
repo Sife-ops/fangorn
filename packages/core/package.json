@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.272.0",
+    "@faker-js/faker": "^7.6.0",
     "electrodb": "^2.4.1",
     "sst": "^2.0.32",
     "ulid": "^2.3.0"

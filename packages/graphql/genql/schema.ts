@@ -1,11 +1,12 @@
 export type Scalars = {
     String: string,
-    Boolean: boolean,
     ID: string,
+    Boolean: boolean,
 }
 
 export interface Mutation {
     mello: Scalars['String']
+    search: User[]
     __typename: 'Mutation'
 }
 
@@ -16,16 +17,22 @@ export interface Query {
 }
 
 export interface User {
-    active: Scalars['Boolean']
     avatar: Scalars['String']
-    discriminator: Scalars['String']
-    userId: Scalars['ID']
-    username: Scalars['String']
+    createdAt: Scalars['String']
+    cursor?: Scalars['String']
+    description?: Scalars['String']
+    discriminator?: Scalars['String']
+    displayName: Scalars['String']
+    lastSeen: Scalars['String']
+    userId?: Scalars['ID']
+    username?: Scalars['String']
+    visible: Scalars['Boolean']
     __typename: 'User'
 }
 
 export interface MutationGenqlSelection{
     mello?: boolean | number
+    search?: (UserGenqlSelection & { __args: {input: SearchInput} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -37,12 +44,19 @@ export interface QueryGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface SearchInput {cursor?: (Scalars['String'] | null),gender?: (Scalars['String'] | null)}
+
 export interface UserGenqlSelection{
-    active?: boolean | number
     avatar?: boolean | number
+    createdAt?: boolean | number
+    cursor?: boolean | number
+    description?: boolean | number
     discriminator?: boolean | number
+    displayName?: boolean | number
+    lastSeen?: boolean | number
     userId?: boolean | number
     username?: boolean | number
+    visible?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

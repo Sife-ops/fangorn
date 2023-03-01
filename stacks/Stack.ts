@@ -52,6 +52,11 @@ export function Database({ stack }: StackContext) {
     },
   });
 
+  new Function(stack, "dataLambda", {
+    bind: [table],
+    handler: "packages/functions/src/data/main.handler",
+  });
+
   return {
     table,
   };
