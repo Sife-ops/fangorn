@@ -162,7 +162,7 @@ export class Ctx {
     return [this.onboardMember(), ...this.onboardResolved()];
   }
 
-  // deferred response
+  // webhooks
   followUp(body: Record<string, any>) {
     const { application_id, token } = this.interactionBody;
     return fetchDiscord(`/webhooks/${application_id}/${token}`, { body });

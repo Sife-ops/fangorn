@@ -1,9 +1,9 @@
 import * as commands from "./commands";
-import AWS from "aws-sdk";
 import nacl from "tweetnacl";
 import { Config } from "sst/node/config";
 import { Ctx } from "./ctx";
 import { Function } from "sst/node/function";
+import { Lambda } from "@aws-sdk/client-lambda";
 import { runner } from "./runner";
 
 import {
@@ -16,7 +16,7 @@ export const handler: Handler<
   APIGatewayProxyEventV2,
   APIGatewayProxyResultV2<any>
 > = async (event) => {
-  const lambda = new AWS.Lambda();
+  const lambda = new Lambda({});
 
   try {
     const interactionBody = JSON.parse(event.body!);
@@ -40,14 +40,16 @@ export const handler: Handler<
       }
 
       case 2: {
-        await lambda
-          .invokeAsync({
-            FunctionName: Function.botLambda.functionName,
-            InvokeArgs: JSON.stringify({ interactionBody }),
-          })
-          .promise();
+        await lambda.invoke({
+          FunctionName: Function.botLambda.functionName,
+          Payload: new TextEncoder().encode(
+            JSON.stringify({ interactionBody })
+          ),
+          InvocationType: "Event",
+        });
 
         return {
+          // todo: use webhook
           type: 5, // deferred
           data: {
             flags: 64,
