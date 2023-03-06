@@ -70,7 +70,7 @@ export const handler: Handler<
 };
 
 export const consumer = async (event: any) => {
-  const ctx = await Ctx.init(event);
+  const ctx = new Ctx(event);
 
   try {
     await Promise.all(ctx.onboardUsers());

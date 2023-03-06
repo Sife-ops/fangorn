@@ -1,5 +1,6 @@
 import { Config } from "sst/node/config";
-import { fetchDiscord, onboardUser } from "./common";
+import { UserEntityType } from "@fangorn/core/db/entity";
+import { fetchDiscord } from "./common";
 import { model as model_ } from "@fangorn/core/db";
 import { sign } from "jsonwebtoken";
 
@@ -57,27 +58,21 @@ export class Options {
   }
 }
 
+interface DiscordUser {
+  id: string;
+  username: string;
+  discriminator: string;
+  avatar: string;
+}
+
 export class Ctx {
   model = model_;
   interactionBody;
   options;
 
-  private constructor(c: { interactionBody: any }) {
+  constructor(c: { interactionBody: any }) {
     this.interactionBody = c.interactionBody;
     this.options = new Options({ interactionBody: c.interactionBody });
-  }
-
-  static async init({ interactionBody }: { interactionBody: any }) {
-    return new Ctx({
-      interactionBody,
-    });
-  }
-
-  followUp(body: Record<string, any>) {
-    const { application_id, token } = this.interactionBody;
-    return fetchDiscord(`/webhooks/${application_id}/${token}`, {
-      body,
-    });
   }
 
   // body
@@ -85,55 +80,91 @@ export class Ctx {
     return this.interactionBody.channel_id;
   }
 
-  getViewer() {
+  getMemberUser(): DiscordUser {
     return this.interactionBody.member.user;
   }
 
-  getViewerId(): string {
-    return this.getViewer().id;
-  }
-
-  getResolvedUsers() {
+  getResolvedUsers(): Record<string, DiscordUser> {
     return this.interactionBody.data.resolved.users;
   }
 
+  async getUserEntity(
+    discordId: string = this.getMemberUser().id
+  ): Promise<UserEntityType> {
+    return this.model.entities.UserEntity.query
+      .discordId_({ discordId })
+      .go()
+      .then((e) => {
+        if (e.data.length < 1) throw new Error("user not found");
+        return e.data[0];
+      });
+  }
+
+  // token
   async getToken(): Promise<string> {
-    await model_.entities.UserEntity.update({
-      userId: this.getViewerId(),
-    })
+    const { userId, tokenVersion } = await this.getUserEntity();
+
+    await this.model.entities.UserEntity.update({ userId })
       .add({ tokenVersion: 1 })
       .go()
       .then((e) => e.data);
 
-    const { userId, tokenVersion } = await model_.entities.UserEntity.get({
-      userId: this.getViewerId(),
-    })
-      .go()
-      .then((e) => {
-        if (!e.data) throw new Error("user not found");
-        return e.data;
-      });
-
-    return sign({ userId, tokenVersion }, Config.WEB_TOKEN_SECRET);
+    return sign(
+      { userId, tokenVersion: tokenVersion + 1 },
+      Config.WEB_TOKEN_SECRET
+    );
   }
 
   // onboard
-  onboardMember() {
-    return onboardUser(this.getViewer());
+  async onboard(discordUser: DiscordUser): Promise<void> {
+    return this.getUserEntity(discordUser.id)
+      .then(async (user) => {
+        if (
+          user.avatar !== discordUser.avatar ||
+          user.discriminator !== discordUser.discriminator ||
+          user.username !== discordUser.username
+        ) {
+          await this.model.entities.UserEntity.update({ userId: user.userId })
+            .set({
+              username: discordUser.username,
+              discriminator: discordUser.discriminator,
+              avatar: discordUser.avatar,
+            })
+            .go();
+        }
+      })
+      .catch(async () => {
+        await this.model.entities.UserEntity.create({
+          discordId: discordUser.id,
+          username: discordUser.username,
+          discriminator: discordUser.discriminator,
+          avatar: discordUser.avatar || "",
+        }).go();
+      });
   }
 
-  onboardResolved() {
+  onboardMember(): Promise<void> {
+    return this.onboard(this.getMemberUser());
+  }
+
+  onboardResolved(): Promise<void>[] {
     try {
       const resolved = this.getResolvedUsers();
       return Object.keys(resolved)
         .map((key) => resolved[key])
-        .map((user) => onboardUser(user));
+        .map((user) => this.onboard(user));
     } catch {
       return [];
     }
   }
 
-  onboardUsers() {
+  onboardUsers(): Promise<void>[] {
     return [this.onboardMember(), ...this.onboardResolved()];
+  }
+
+  // deferred response
+  followUp(body: Record<string, any>) {
+    const { application_id, token } = this.interactionBody;
+    return fetchDiscord(`/webhooks/${application_id}/${token}`, { body });
   }
 }

@@ -1,6 +1,7 @@
 import { Dynamo } from "../dynamo";
 import { Entity, EntityItem } from "electrodb";
 import { faker } from "@faker-js/faker";
+import { ulid } from "ulid";
 
 export const UserEntity = new Entity(
   {
@@ -29,14 +30,26 @@ export const UserEntity = new Entity(
         },
       },
 
-      recent_: {
+      discordId_: {
         index: "gsi2",
         pk: {
           field: "gsi2pk",
-          composite: [],
+          composite: ["discordId"],
         },
         sk: {
           field: "gsi2sk",
+          composite: [],
+        },
+      },
+
+      recent_: {
+        index: "gsi3",
+        pk: {
+          field: "gsi3pk",
+          composite: [],
+        },
+        sk: {
+          field: "gsi3sk",
           composite: ["lastSeen"],
         },
       },
@@ -44,6 +57,12 @@ export const UserEntity = new Entity(
 
     attributes: {
       userId: {
+        type: "string",
+        required: true,
+        default: () => ulid(),
+      },
+
+      discordId: {
         type: "string",
         required: true,
       },
@@ -87,18 +106,6 @@ export const UserEntity = new Entity(
         required: false,
       },
 
-      lastSeen: {
-        type: "string",
-        required: true,
-        default: () => new Date().toISOString(),
-      },
-
-      createdAt: {
-        type: "string",
-        required: true,
-        default: () => new Date().toISOString(),
-      },
-
       gender: {
         type: "string",
         required: false,
@@ -113,6 +120,18 @@ export const UserEntity = new Entity(
       //   type: "string",
       //   required: false,
       // },
+
+      lastSeen: {
+        type: "string",
+        required: true,
+        default: () => new Date().toISOString(),
+      },
+
+      createdAt: {
+        type: "string",
+        required: true,
+        default: () => new Date().toISOString(),
+      },
     },
 
     model: {

@@ -3,12 +3,13 @@ import { builder } from "../builder";
 
 export const UserType = builder.objectRef<
   UserEntityType & {
-    cursor?: string | null;
+    cursor?: string;
   }
 >("User");
 UserType.implement({
   fields: (t) => ({
-    userId: t.exposeID("userId", { nullable: true }),
+    userId: t.exposeID("userId"),
+    discordId: t.exposeString("discordId", { nullable: true }),
     username: t.exposeString("username", { nullable: true }),
     discriminator: t.exposeString("discriminator", { nullable: true }),
     avatar: t.exposeString("avatar"),

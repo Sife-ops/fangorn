@@ -11,7 +11,7 @@ export const handler = async (_event: any) => {
       .fill(null)
       .map((_, i) => {
         return model.entities.UserEntity.create({
-          userId: faker.random.numeric(18).toString(),
+          discordId: faker.random.numeric(18).toString(),
           username: faker.word.noun(),
           discriminator: faker.random.numeric(4).toString(),
           avatar: "",

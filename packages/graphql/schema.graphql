@@ -18,10 +18,11 @@ type User {
   createdAt: String!
   cursor: String
   description: String
+  discordId: String
   discriminator: String
   displayName: String!
   lastSeen: String!
-  userId: ID
+  userId: ID!
   username: String
   visible: Boolean!
 }

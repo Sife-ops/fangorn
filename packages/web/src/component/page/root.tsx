@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useTypedQuery, useTypedMutation } from "@fangorn/graphql/urql";
+import { useTypedMutation } from "@fangorn/graphql/urql";
 import { useViewerContext } from "../../viewer-context";
 import { SearchInput } from "@fangorn/graphql/genql";
 
@@ -15,17 +15,13 @@ export const Root: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [cursor, setCursor] = useState<string>();
 
-  const [a, b] = useTypedMutation((o: SearchInput) => {
-    return {
-      search: {
-        __args: {
-          input: o,
-        },
-        description: true,
-        cursor: true,
-      },
-    };
-  });
+  const [a, b] = useTypedMutation((input: SearchInput) => ({
+    search: {
+      __args: { input },
+      description: true,
+      cursor: true,
+    },
+  }));
 
   useEffect(() => {
     b({ cursor });
@@ -36,7 +32,7 @@ export const Root: React.FC = () => {
     if (!fetching && data) {
       const { search } = data;
       setUsers((s) => [...s, ...search]);
-      setCursor(search[search.length - 1].cursor);
+      setCursor(search[0].cursor);
     }
   }, [a]);
 

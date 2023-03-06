@@ -21,10 +21,11 @@ export interface User {
     createdAt: Scalars['String']
     cursor?: Scalars['String']
     description?: Scalars['String']
+    discordId?: Scalars['String']
     discriminator?: Scalars['String']
     displayName: Scalars['String']
     lastSeen: Scalars['String']
-    userId?: Scalars['ID']
+    userId: Scalars['ID']
     username?: Scalars['String']
     visible: Scalars['Boolean']
     __typename: 'User'
@@ -51,6 +52,7 @@ export interface UserGenqlSelection{
     createdAt?: boolean | number
     cursor?: boolean | number
     description?: boolean | number
+    discordId?: boolean | number
     discriminator?: boolean | number
     displayName?: boolean | number
     lastSeen?: boolean | number

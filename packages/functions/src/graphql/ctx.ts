@@ -24,7 +24,7 @@ export class Ctx {
   }
 
   async getViewer(): Promise<UserEntityType> {
-    return model_.entities.UserEntity.get({
+    return this.model.entities.UserEntity.get({
       userId: this.getPayload().userId,
     })
       .go()
@@ -35,7 +35,7 @@ export class Ctx {
       })
       .then(async (user) => {
         // todo: sus, move somewhere else
-        await model_.entities.UserEntity.update({
+        await this.model.entities.UserEntity.update({
           userId: user.userId,
         })
           .set({ lastSeen: new Date().toISOString() })

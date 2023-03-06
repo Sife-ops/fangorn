@@ -34,23 +34,19 @@ builder.mutationFields((t) => ({
             cursor,
           });
 
-        users.push(
-          ...result.data.map((e) => ({
-            ...e,
-            discriminator: null,
-            userId: null,
-            username: null,
-          }))
-        );
+        users.push(...result.data);
 
-        if (!result.cursor) break;
         cursor = result.cursor;
+        if (!result.cursor) break;
       }
 
-      const lastInd = users.length - 1;
-      users[lastInd] = { ...users[lastInd], cursor };
-
-      return users;
+      return users.map((e) => ({
+        ...e,
+        discordId: null,
+        username: null,
+        discriminator: null,
+        cursor,
+      }));
     },
   }),
 }));

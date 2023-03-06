@@ -58,6 +58,9 @@ export default {
             "description": [
                 1
             ],
+            "discordId": [
+                1
+            ],
             "discriminator": [
                 1
             ],
