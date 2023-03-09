@@ -32,13 +32,23 @@ export class ConsumerCtx {
     return new ConsumerCtx({ interactionBody, shiritori });
   }
 
-  setShiritoriChannel() {
+  private setShiritori() {
     return this.model.entities.ShiritoriEntity.update({
       shiritoriId: this.shiritori.shiritoriId,
-    })
+    });
+  }
+
+  setShiritoriChannel() {
+    return this.setShiritori()
       .set({
         channelId: this.interactionBody.channel_id,
       })
+      .go();
+  }
+
+  setShiritoriLanguage() {
+    return this.setShiritori()
+      .set({ language: this.options.getOptionValue("language") as "en" | "jp" })
       .go();
   }
 

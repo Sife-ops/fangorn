@@ -87,7 +87,7 @@ export const ShiritoriEntity = new Entity(
       },
 
       language: {
-        type: "string",
+        type: ["en", "jp"] as const,
         required: true,
         default: "jp",
       },
