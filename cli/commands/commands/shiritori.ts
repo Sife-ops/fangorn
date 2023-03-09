@@ -5,9 +5,15 @@ export const shiritori = {
   options: [
     {
       name: "word",
-      description: "shiritori word",
+      description: "word",
       type: 3,
       required: true,
+    },
+    {
+      name: "reading",
+      description: "reading",
+      type: 3,
+      required: false,
     },
   ],
 };

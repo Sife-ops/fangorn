@@ -4,10 +4,13 @@ import { CommandHandler } from "../runner";
 import { getShiri } from "../common";
 
 export const shiritori: CommandHandler = async (ctx) => {
-  // todo: "reading" option
   const word = ctx.options.getOptionValue("word") as string;
+  const reading_ = ctx.options.getOptionValue("reading") as string | undefined;
 
-  const url = `https://dictionary.goo.ne.jp/word/${word}/`;
+  const url = reading_
+    ? `https://dictionary.goo.ne.jp/word/${word}_%28${reading_}%29/`
+    : `https://dictionary.goo.ne.jp/word/${word}/`;
+
   const reading = await fetch(url, { method: "GET" })
     .then((e) => e.text())
     .then((e) => cheerio.load(e))
@@ -43,8 +46,8 @@ export const shiritori: CommandHandler = async (ctx) => {
       ctx.model.entities.WordEntity.create({
         shiritoriId: ctx.shiritori.shiritoriId,
         memberHash: ctx.member.getIdHash(),
-        word,
         reading,
+        word,
       }).go(),
 
       ctx.model.entities.ShiritoriEntity.update({

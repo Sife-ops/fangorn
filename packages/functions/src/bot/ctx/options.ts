@@ -52,12 +52,12 @@ export class Options {
     return this.getCommand(index).name;
   }
 
-  getOptionValue(optionName: string): string | number {
+  getOptionValue(optionName: string): any {
     const flatOptions = this.getFlatOptions();
     const value = flatOptions[flatOptions.length - 1].find(
       (option) => option.name === optionName
     )?.value;
-    if (!value) throw new Error(`option not found: "${optionName}"`);
+    // if (!value) throw new Error(`option not found: "${optionName}"`);
     return value;
   }
 }
