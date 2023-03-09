@@ -18,3 +18,13 @@ export const fetchDiscord = async (
     body: JSON.stringify(i.body),
   });
 };
+
+export const ephemeralResponse = (content: string) => {
+  return {
+    type: 4,
+    data: {
+      flags: 64,
+      content,
+    },
+  };
+};
