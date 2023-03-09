@@ -1,5 +1,6 @@
 import { Member } from "./member";
 import { Options } from "./options";
+import { ReplyI8l } from "./reply-i8l";
 import { ShiritoriEntityType, WordEntityType } from "@fangorn/core/db/entity";
 import { fetchDiscord, getRecentWords } from "../common";
 import { model as model_ } from "@fangorn/core/db";
@@ -10,6 +11,7 @@ export class HandlerCtx {
   options;
   member;
   shiritori;
+  replyI8l;
 
   private constructor(c: {
     interactionBody: any;
@@ -19,6 +21,7 @@ export class HandlerCtx {
     this.options = new Options({ interactionBody: c.interactionBody });
     this.member = new Member({ interactionBody: c.interactionBody });
     this.shiritori = c.shiritori;
+    this.replyI8l = new ReplyI8l({ shiritori: c.shiritori });
   }
 
   static async init({ interactionBody }: { interactionBody: any }) {

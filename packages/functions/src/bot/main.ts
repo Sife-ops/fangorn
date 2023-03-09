@@ -47,35 +47,31 @@ export const handler: Handler<
       if (!ctx.isMemberAuthorized()) {
         const name = ctx.options.getCommandName(0);
         const id = ctx.options.getCommandId(0);
-        return ephemeralResponse(
-          `You must be an administrator to use </${name}:${id}>.`
-        );
+        return ephemeralResponse(ctx.replyI8l.unauthorized(name, id));
       }
 
       if (ctx.options.getCommandName(0) === "shiritori") {
         if (!ctx.shiritori.channelId) {
-          return ephemeralResponse("Shiritori channel not set.");
+          return ephemeralResponse(ctx.replyI8l.channelNotSet());
         }
 
         if (interactionBody.channel_id !== ctx.shiritori.channelId) {
           return ephemeralResponse(
-            `You can only use shiritori in <#${ctx.shiritori.channelId}>.`
+            ctx.replyI8l.wrongChannel(ctx.shiritori.channelId)
           );
         }
 
         const words = await ctx.getRecentWords();
         if (words.length > 0) {
           if (compareSync(ctx.member.getId(), words[0].memberHash)) {
-            return ephemeralResponse("It's not your turn.");
+            return ephemeralResponse(ctx.replyI8l.notYourTurn());
           }
 
           const wordIndex = words.findIndex(
             (w) => w.word === ctx.options.getOptionValue("word")
           );
           if (wordIndex > -1) {
-            return ephemeralResponse(
-              `That word is in cooldown for the next ${100 - wordIndex} turns.`
-            );
+            return ephemeralResponse(ctx.replyI8l.cooldown(100 - wordIndex));
           }
         }
       }
@@ -87,6 +83,7 @@ export const handler: Handler<
         InvocationType: "Event",
       });
 
+      // todo: ranking
       const ephemeral = ["channel", "language", "foo"];
       if (ephemeral.includes(ctx.options.getCommandName(0))) {
         return {

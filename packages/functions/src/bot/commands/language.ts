@@ -6,7 +6,9 @@ export const language: CommandHandler = async (ctx) => {
       ctx.setShiritoriLanguage(),
 
       ctx.followUp({
-        content: "language",
+        content: ctx.replyI8l.language(
+          ctx.options.getOptionValue("language") as "en" | "jp"
+        ),
       }),
     ],
   };

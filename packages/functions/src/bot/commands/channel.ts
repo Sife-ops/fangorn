@@ -4,8 +4,9 @@ export const channel: CommandHandler = async (ctx) => {
   return {
     mutations: [
       ctx.setShiritoriChannel(),
+
       ctx.followUp({
-        content: "channel",
+        content: ctx.replyI8l.channel(ctx.getChannelId()),
       }),
     ],
   };

@@ -31,7 +31,7 @@ export const shiritori: CommandHandler = async (ctx) => {
       if (getShiri(words[0].reading) !== reading[0]) {
         mutations.push(
           ctx.followUp({
-            content: `${word} is not a shiritori! (-1)`,
+            content: `❌ ${ctx.replyI8l.shiritoriBad(word)}`,
           })
         );
 
@@ -54,13 +54,13 @@ export const shiritori: CommandHandler = async (ctx) => {
         .go(),
 
       ctx.followUp({
-        content: `Shiritori get! (+1) ${url}`,
+        content: `⭕ ${ctx.replyI8l.shiritoriGet()} (${url})`,
       }),
     ];
   } else {
     mutations.push(
       ctx.followUp({
-        content: `${word} could not be found! (-1)`,
+        content: `❌ ${ctx.replyI8l.shiritoriNotFound(word)}`,
       })
     );
   }
