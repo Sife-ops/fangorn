@@ -1,8 +1,10 @@
 import * as cheerio from "cheerio";
 import fetch from "node-fetch";
 import { CommandHandler } from "../runner";
+import { getShiri } from "../common";
 
 export const shiritori: CommandHandler = async (ctx) => {
+  // todo: "reading" option
   const word = ctx.options.getOptionValue("word") as string;
 
   const url = `https://dictionary.goo.ne.jp/word/${word}/`;
@@ -26,10 +28,7 @@ export const shiritori: CommandHandler = async (ctx) => {
     const words = await ctx.getRecentWords();
 
     if (words.length > 0) {
-      const lastReading = words[0].reading;
-      const shiri = lastReading[lastReading.length - 1];
-
-      if (shiri !== reading[0]) {
+      if (getShiri(words[0].reading) !== reading[0]) {
         mutations.push(
           ctx.followUp({
             content: `${word} is not a shiritori! (-1)`,
@@ -43,7 +42,7 @@ export const shiritori: CommandHandler = async (ctx) => {
     mutations = [
       ctx.model.entities.WordEntity.create({
         shiritoriId: ctx.shiritori.shiritoriId,
-        memberHash: ctx.getMemberIdHash(),
+        memberHash: ctx.member.getIdHash(),
         word,
         reading,
       }).go(),

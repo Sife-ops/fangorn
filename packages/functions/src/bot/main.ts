@@ -20,6 +20,7 @@ export const handler: Handler<
   APIGatewayProxyResultV2<any>
 > = async (event) => {
   const interactionBody = JSON.parse(event.body!);
+
   switch (interactionBody.type) {
     case 1: {
       const verified = nacl.sign.detached.verify(
@@ -44,8 +45,10 @@ export const handler: Handler<
       const ctx = await HandlerCtx.init({ interactionBody });
 
       if (!ctx.isMemberAuthorized()) {
+        const name = ctx.options.getCommandName(0);
+        const id = ctx.options.getCommandId(0);
         return ephemeralResponse(
-          "You must be an administrator to use this command."
+          `You must be an administrator to use </${name}:${id}>.`
         );
       }
 
@@ -62,7 +65,7 @@ export const handler: Handler<
 
         const words = await ctx.getRecentWords();
         if (words.length > 0) {
-          if (compareSync(ctx.getMemberId(), words[0].memberHash)) {
+          if (compareSync(ctx.member.getId(), words[0].memberHash)) {
             return ephemeralResponse("It's not your turn.");
           }
 

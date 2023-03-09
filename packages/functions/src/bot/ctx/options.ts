@@ -1,6 +1,7 @@
 interface Option {
   name: string;
   type: number;
+  id?: string;
   value?: string | number;
   options?: Option[];
 }
@@ -23,7 +24,7 @@ export class Options {
     };
 
     const {
-      data: { name, options, type },
+      data: { name, options, type, id },
     } = this.interactionBody;
 
     return [
@@ -32,14 +33,23 @@ export class Options {
           name,
           options,
           type,
+          id,
         },
       ],
       ...recurse(options),
     ];
   }
 
+  getCommand(index: number): Option {
+    return this.getFlatOptions()[index][0];
+  }
+
+  getCommandId(index: number): string {
+    return this.getCommand(index).id!;
+  }
+
   getCommandName(index: number): string {
-    return this.getFlatOptions()[index][0].name;
+    return this.getCommand(index).name;
   }
 
   getOptionValue(optionName: string): string | number {
