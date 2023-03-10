@@ -43,7 +43,6 @@ export const handler: Handler<
 
     case 2: {
       const ctx = await HandlerCtx.init({ interactionBody });
-      console.log(ctx.options.getOptionValue("reading"));
 
       if (!ctx.isMemberAuthorized()) {
         const name = ctx.options.getCommandName(0);

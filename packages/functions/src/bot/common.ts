@@ -1,3 +1,4 @@
+import * as cheerio from "cheerio";
 import fetch, { RequestInit, Response } from "node-fetch";
 import { Config } from "sst/node/config";
 import { WordEntityType } from "@fangorn/core/db/entity";
@@ -40,15 +41,31 @@ export const getRecentWords = async (
     .then((result) => result.data);
 };
 
+export const gooJisho = async (url: string) => {
+  return fetch(url, { method: "GET" })
+    .then((e) => e.text())
+    .then((e) => cheerio.load(e))
+    .then((e) => e(".yomi").text());
+};
+
 export const getShiri = (s: string) => {
   const shiri = s[s.length - 1];
   switch (shiri) {
     case "ゃ":
       return "や";
+    case "ャ":
+      return "ヤ";
     case "ゅ":
       return "ゆ";
+    case "ュ":
+      return "ユ";
     case "ょ":
       return "よ";
+    case "ョ":
+      return "ヨ";
+    // case "ん":
+    // case "ン":
+    //   return s[s.length - 2];
     default:
       return shiri;
   }
